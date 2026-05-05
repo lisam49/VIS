@@ -11,104 +11,132 @@ identify vehicles, track services, file reports, and manage violations.
 
 ## 1. Technology Stack
 
-| Layer        | Technology                   |
-|--------------|------------------------------|
-| Frontend     | JavaFX 21                    |
-| Backend      | PostgreSQL 14+               |
-| DB driver    | JDBC (`org.postgresql:42.7`) |
-| Build tool   | Maven                        |
-| Language     | Java 17                      |
-| IDE          | IntelliJ IDEA Community 2023+|
-| Version ctrl | Git / GitHub                 |
+| Layer | Technology |
+|-------|------------|
+| Frontend | JavaFX 19+ |
+| Backend | PostgreSQL 14+ |
+| Database Driver | JDBC (PostgreSQL 42.5.1) |
+| Build Tool | Maven |
+| Language | Java 17+ |
+| IDE | IntelliJ IDEA |
+| Version Control | Git / GitHub |
 
+---
 ---
 
 ## 2. Project Structure (MVC)
 
-```
 vehicle-identification-system/
 ├── pom.xml
 ├── README.md
+├── CONTRIBUTION.md
 └── src/main/
-    ├── java/com/vis/
-    │   ├── Main.java               ← JavaFX entry point
-    │   ├── model/                  ← MODEL layer
-    │   │   ├── Person.java         (abstract — INHERITANCE root)
-    │   │   ├── Customer.java
-    │   │   ├── Admin.java
-    │   │   ├── Officer.java
-    │   │   ├── Reportable.java     (interface — POLYMORPHISM)
-    │   │   ├── Vehicle.java
-    │   │   ├── ServiceRecord.java
-    │   │   ├── PoliceReport.java
-    │   │   ├── Violation.java
-    │   │   └── AppUser.java
-    │   ├── view/                   ← VIEW layer
-    │   │   ├── LoginView.java
-    │   │   ├── DashboardView.java
-    │   │   ├── VehicleView.java
-    │   │   ├── WorkshopView.java
-    │   │   ├── CustomerView.java
-    │   │   ├── PoliceView.java
-    │   │   ├── InsuranceView.java
-    │   │   └── BrowseVehiclesView.java
-    │   ├── controller/             ← CONTROLLER layer
-    │   │   ├── LoginController.java
-    │   │   ├── VehicleController.java
-    │   │   ├── WorkshopController.java
-    │   │   ├── CustomerController.java
-    │   │   ├── PoliceController.java
-    │   │   └── InsuranceController.java
-    │   ├── dao/                    ← Data Access Objects (JDBC)
-    │   │   ├── DatabaseConnection.java
-    │   │   ├── AppUserDAO.java
-    │   │   ├── VehicleDAO.java
-    │   │   ├── CustomerDAO.java
-    │   │   ├── ServiceRecordDAO.java
-    │   │   ├── PoliceReportDAO.java
-    │   │   └── ViolationDAO.java
-    │   └── util/
-    │       ├── AlertUtil.java
-    │       └── SessionManager.java
-    └── resources/
-        ├── db.properties           ← Edit DB credentials here
-        └── database/schema.sql     ← Tables, views, procedures, seed data
-```
-
+├── java/com/vis/
+│   ├── Main.java
+│   ├── model/
+│   │   ├── BaseModel.java
+│   │   ├── Person.java
+│   │   ├── Customer.java
+│   │   ├── Admin.java
+│   │   ├── Officer.java
+│   │   ├── Reportable.java
+│   │   ├── Vehicle.java
+│   │   ├── ServiceRecord.java
+│   │   ├── PoliceReport.java
+│   │   ├── Violation.java
+│   │   ├── AppUser.java
+│   │   └── CustomerQuery.java
+│   ├── view/
+│   │   ├── BaseView.java
+│   │   ├── LoginView.java
+│   │   ├── DashboardView.java
+│   │   ├── VehicleView.java
+│   │   ├── WorkshopView.java
+│   │   ├── CustomerView.java
+│   │   ├── PoliceView.java
+│   │   ├── InsuranceView.java
+│   │   ├── BrowseVehiclesView.java
+│   │   ├── CustomerVehicleView.java
+│   │   ├── CustomerBrowseVehicleView.java
+│   │   ├── SystemRecordsView.java
+│   │   └── UserManagementView.java
+│   ├── controller/
+│   │   ├── LoginController.java
+│   │   ├── VehicleController.java
+│   │   ├── WorkshopController.java
+│   │   ├── CustomerController.java
+│   │   ├── PoliceController.java
+│   │   └── InsuranceController.java
+│   ├── dao/
+│   │   ├── DatabaseConnection.java
+│   │   ├── AppUserDAO.java
+│   │   ├── VehicleDAO.java
+│   │   ├── CustomerDAO.java
+│   │   ├── ServiceRecordDAO.java
+│   │   ├── PoliceReportDAO.java
+│   │   ├── ViolationDAO.java
+│   │   └── InsuranceDAO.java
+│   └── util/
+│       ├── AlertUtil.java
+│       └── SessionManager.java
+└── resources/
+├── db.properties
+└── database/
+└── schema.sql
 ---
 
 ## 3. Setup in IntelliJ IDEA Community
 
-1. **Unzip** the project anywhere on disk.
-2. Open **IntelliJ IDEA Community → File → Open** and select the
-   `vehicle-identification-system` folder. IntelliJ detects the Maven
-   project automatically and downloads all dependencies (JavaFX,
-   PostgreSQL JDBC).
-3. Make sure **Project SDK** is set to **JDK 17 or newer**
-   (`File → Project Structure → Project`).
-4. Wait for the Maven import to finish.
+## Setup Instructions
 
----
+### Prerequisites
+- Java 17 or newer installed
+- PostgreSQL 14 or newer installed
+- IntelliJ IDEA (or any Java IDE)
+
+### Step 1: Open Project in IntelliJ
+
+1. Open IntelliJ IDEA
+2. Click **File → Open**
+3. Select the `vehicle-identification-system` folder
+4. IntelliJ will automatically detect the Maven project and download dependencies (JavaFX, PostgreSQL JDBC)
+
+### Step 2: Configure JDK
+
+1. Go to **File → Project Structure → Project**
+2. Set **Project SDK** to **JDK 17** or newer
+3. Click **OK**
+
+### Step 3: Wait for Maven Import
+
+- Let IntelliJ finish downloading all dependencies
+- Check the progress bar at the bottom of the IDE
+
+### Step 4: Set Up the Database
+
+1. Create a PostgreSQL database:
+```sql
+CREATE DATABASE lisebo_db;
 
 ## 4. Database Setup (PostgreSQL)
 
-1. Install PostgreSQL and create a database called `vis_db`:
+1. Install PostgreSQL and create a database called `lisebo_db`:
    ```sql
-   CREATE DATABASE vis_db;
+   CREATE DATABASE lisebo_db;
    ```
 2. Connect to it and run the schema script located at:
-   ```
-   src/main/resources/database/schema.sql
-   ```
-   This creates all tables, **views** (`vw_vehicle_full_details`,
-   `vw_outstanding_violations`, `vw_service_history`), **stored
-   procedures** (`sp_add_vehicle`, `sp_register_service`,
-   `sp_pay_violation`) and seeds 25 vehicles, 10 customers and demo users.
+
+This creates:
+- **8 tables:** AppUser, Customer, Vehicle, ServiceRecord, PoliceReport, Violation, CustomerQuery
+- **3 views:** `vw_vehicle_full_details`, `vw_service_history`, `vw_outstanding_violations`
+- **3 stored procedures:** `sp_add_vehicle`, `sp_register_service`, `sp_pay_violation`
+- **Sample data:** 5 users, 16 customers, 25 vehicles, 7 service records, 
+- 3 police reports, 5 violations
 3. Edit `src/main/resources/db.properties` with your local credentials:
    ```properties
-   db.url=jdbc:postgresql://localhost:5432/vis_db
+   db.url=jdbc:postgresql://localhost:5432/lisebo_db
    db.user=postgres
-   db.password=YOUR_PASSWORD
+   db.password=lisam
    ```
 
 ---
@@ -138,28 +166,29 @@ mvn clean javafx:run
 
 ---
 
-## 6. Feature Map (matches the rubric)
-
-| Requirement                                   | Where to find it                                              |
-|-----------------------------------------------|---------------------------------------------------------------|
-| **MVC architecture**                          | `model/`, `view/`, `controller/` packages                     |
-| **Menu Bar & Menu Items**                     | `DashboardView.buildMenuBar()` (File > Refresh / Sign Out / Exit, View, Help) |
-| **TableView**                                 | Every module view (Vehicle, Workshop, Customer, Police, Insurance) |
-| **Pagination + ScrollPane**                   | `BrowseVehiclesView` — 25 vehicle cards, 5 per page           |
-| **Progress Bar + Progress Indicator**         | Status bar in `DashboardView`, plus workshop progress         |
-| **DropShadow visual effect**                  | Login button, info cards, browse cards                        |
-| **FadeTransition**                            | Continuous fade on the login button & home cards              |
-| **PostgreSQL via JDBC**                       | `dao/` package + `DatabaseConnection`                         |
-| **Stored Procedures**                         | `sp_add_vehicle`, `sp_register_service`, `sp_pay_violation`   |
-| **Views**                                     | `vw_vehicle_full_details`, `vw_outstanding_violations`, `vw_service_history` |
-| **Inheritance**                               | `Person` → `Customer`, `Admin`, `Officer`                     |
-| **Polymorphism**                              | `Reportable` implemented by `ServiceRecord`, `PoliceReport`, `Violation`; `Person.getRoleDescription()` overridden in subclasses |
-| **Exception Handling**                        | try/catch around every JDBC call + UI alerts                  |
-| **Repetition statements**                     | DAO `while (rs.next())` loops, page rendering loops           |
-| **String Manipulation**                       | `trim()`, `toUpperCase()`, formatted summaries                |
-| **File handling**                             | `db.properties` loaded via `DatabaseConnection.loadConfiguration()` |
-
----
+## 6. Feature Map 
+| Requirement | Where to find it |
+|-------------|------------------|
+| **MVC architecture** | `model/`, `view/`, `controller/` packages |
+| **Menu Bar & Menu Items** | `DashboardView.buildStyledMenuBar()` - File menu (Refresh, Sign Out, Exit), View menu (Full Screen), Help menu (About) |
+| **TableView** | `CustomerView.java`, `VehicleView.java`, `PoliceView.java`, `InsuranceView.java`, `WorkshopView.java` |
+| **Pagination** | `BrowseVehiclesView.java` - 6 vehicles per page with page controls |
+| **ScrollPane (20+ items)** | `SystemRecordsView.java` - 25 dummy records arranged vertically |
+| **Progress Bar & Progress Indicator** | `WorkshopView.java` - Today's workshop progress bar; `DashboardView.java` - Status bar with progress indicator |
+| **DropShadow visual effect** | `LoginView.java` - Sign In button; `DashboardView.java` - Stat cards and quick action buttons; `BrowseVehiclesView.java` - Vehicle cards |
+| **FadeTransition** | `LoginView.java` - Continuous fade on Sign In button; `DashboardView.java` - Fade animation when swapping views |
+| **PostgreSQL via JDBC** | `dao/DatabaseConnection.java` + all DAO classes (`VehicleDAO.java`, `CustomerDAO.java`, `AppUserDAO.java`, etc.) |
+| **Stored Procedures** | `database/schema.sql` - `sp_add_vehicle`, `sp_register_service`, `sp_pay_violation` |
+| **Database Views** | `database/schema.sql` - `vw_vehicle_full_details`, `vw_service_history`, `vw_outstanding_violations` |
+| **Inheritance** | `model/Person.java` (abstract) → `Customer.java`, `Admin.java`, `Officer.java`; `model/BaseModel.java` (abstract) → `Vehicle.java`, `Customer.java`, `AppUser.java` |
+| **Polymorphism** | `model/Reportable.java` interface implemented by `ServiceRecord.java`, `PoliceReport.java`, `Violation.java`; `Person.getRoleDescription()` overridden in subclasses; `BaseModel.getDisplayName()` overridden in subclasses |
+| **Exception Handling** | `try-catch` blocks in all controllers (`LoginController.java`, `VehicleController.java`, etc.) and DAOs; `AlertUtil.java` for user-friendly error messages |
+| **Repetition statements** | DAO `while(rs.next())` loops for database results; `for` loops in `BrowseVehiclesView.java` for pagination; `for` loops in `SystemRecordsView.java` for 25 items |
+| **String Manipulation** | `trim()` and `toUpperCase()` on registration numbers; `String.format()` for currency display; `getSummary()` methods concatenating strings |
+| **File handling** | `db.properties` loaded via `DatabaseConnection.loadConfiguration()` using `Properties` class and `InputStream` |
+| **Role-Based Access Control** | `DashboardView.java` - `switch(user.getRole())` shows different menu items for ADMIN, WORKSHOP, CUSTOMER, POLICE, INSURANCE |
+| **Second-Hand Vehicle Marketplace** | `CustomerBrowseVehicleView.java` - Browse vehicles and contact owners via dialog |
+| **Insurance Policy Management** | `InsuranceView.java` - Register, Activate, and Renew policies with status color-coding |
 
 ## 7. GitHub
 
@@ -169,15 +198,7 @@ git init
 git add .
 git commit -m "Initial commit — Vehicle Identification System"
 git branch -M main
-git remote add origin https://github.com/<your-username>/vehicle-identification-system.git
+git remote add origin https://github.com/lisam49/VIS.git
 git push -u origin main
 ```
 
-Add the resulting repository link to your project documentation.
-
----
-
-## 8. License
-
-This project was created as a learning exercise. You are free to extend
-and modify it for educational purposes.
