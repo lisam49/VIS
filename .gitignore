@@ -1,0 +1,18 @@
+# Compiled files
+*.class
+target/
+out/
+
+# IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# Database properties
+src/main/resources/db.properties
+
+# OS files
+.DS_Store
+Thumbs.db
