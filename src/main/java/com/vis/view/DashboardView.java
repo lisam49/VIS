@@ -39,7 +39,7 @@ public class DashboardView {
 
     public void show(Stage stage, AppUser user) {
         root = new BorderPane();
-        root.setTop(buildStyledMenuBar(stage, user));
+        root.setTop(buildStyledMenuBar(stage));
         root.setLeft(buildSidebar(user));
 
         content = new StackPane();
@@ -55,10 +55,29 @@ public class DashboardView {
         stage.setScene(scene);
         stage.setMinWidth(1200);
         stage.setMinHeight(800);
+
+        // Make window draggable when clicking on the menu bar
+        makeWindowDraggable(stage, root.getTop());
+
         stage.show();
     }
 
-    private HBox buildStyledMenuBar(Stage stage, AppUser user) {
+    private void makeWindowDraggable(Stage stage, Node draggableNode) {
+        final double[] xOffset = {0};
+        final double[] yOffset = {0};
+
+        draggableNode.setOnMousePressed(event -> {
+            xOffset[0] = event.getSceneX();
+            yOffset[0] = event.getSceneY();
+        });
+
+        draggableNode.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset[0]);
+            stage.setY(event.getScreenY() - yOffset[0]);
+        });
+    }
+
+    private HBox buildStyledMenuBar(Stage stage) {
         HBox menuContainer = new HBox();
         menuContainer.setAlignment(Pos.CENTER_LEFT);
         menuContainer.setPadding(new Insets(10, 24, 10, 24));
@@ -85,7 +104,7 @@ public class DashboardView {
 
         MenuItem refresh = new MenuItem("⟳ Refresh");
         styleMenuItem(refresh);
-        refresh.setOnAction(e -> setStatus("E nchafalitsoe"));
+        refresh.setOnAction(e -> setStatus("Refreshed"));
 
         MenuItem logout = new MenuItem("🚪 Sign Out");
         styleMenuItem(logout);
@@ -132,7 +151,7 @@ public class DashboardView {
         searchBox.setAlignment(Pos.CENTER_RIGHT);
 
         TextField searchField = new TextField();
-        searchField.setPromptText("Batla koloi...");
+        searchField.setPromptText("Search vehicle...");
         searchField.setPrefWidth(220);
         searchField.setStyle(
                 "-fx-background-color: " + DARK_SLATE + ";" +
@@ -154,8 +173,8 @@ public class DashboardView {
         );
         searchBtn.setOnAction(e -> {
             if (!searchField.getText().trim().isEmpty()) {
-                setStatus("Ho batloa: " + searchField.getText());
-                AlertUtil.info("Phatlalatso", "Ho batloa '" + searchField.getText() + "' - ts'ebetso e tla tsoela pele");
+                setStatus("Searching: " + searchField.getText());
+                AlertUtil.info("Search", "Searching for '" + searchField.getText() + "' - feature coming soon");
             }
         });
 
@@ -233,7 +252,7 @@ public class DashboardView {
         brand.setFont(Font.font("Helvetica", FontWeight.BOLD, 28));
         brand.setTextFill(Color.web(ROSE_GOLD));
 
-        Label brandSub = new Label("Sisteme ea Boitsebiso ba Likoloi");
+        Label brandSub = new Label("Vehicle Identification System");
         brandSub.setFont(Font.font("Helvetica", FontWeight.LIGHT, 10));
         brandSub.setTextFill(Color.web(PEARL_WHITE));
         brandSub.setWrapText(true);
@@ -296,50 +315,50 @@ public class DashboardView {
         switch (user.getRole()) {
             case ADMIN:
                 nav.getChildren().addAll(
-                        createNavButton("👑", "Tsamaiso ea Basebelisi", () -> swap(new UserManagementView().build())),
-                        createNavButton("🚗", "Rejistara ea Likoloi", () -> swap(new VehicleView().build())),
-                        createNavButton("👥", "Tsamaiso ea Bareki", () -> swap(new CustomerView().build())),
-                        createNavButton("🔍", "Batla Likoloi", () -> swap(new BrowseVehiclesView().build())),
-                        createNavButton("📊", "Lirekoto tsa Sisteme", () -> swap(new SystemRecordsView().build()))
+                        createNavButton("👑", "User Management", () -> swap(new UserManagementView().build())),
+                        createNavButton("🚗", "Vehicle Registry", () -> swap(new VehicleView().build())),
+                        createNavButton("👥", "Customer Management", () -> swap(new CustomerView().build())),
+                        createNavButton("🔍", "Browse Vehicles", () -> swap(new BrowseVehiclesView().build())),
+                        createNavButton("📊", "System Records", () -> swap(new SystemRecordsView().build()))
                 );
                 break;
 
             case WORKSHOP:
                 nav.getChildren().addAll(
-                        createNavButton("🚗", "Rejistara ea Likoloi", () -> swap(new VehicleView().build())),
-                        createNavButton("🔧", "Litšebeletso tsa Workshop", () -> swap(new WorkshopView().build())),
-                        createNavButton("🔍", "Batla Likoloi", () -> swap(new BrowseVehiclesView().build())),
-                        createNavButton("📊", "Lirekoto tsa Sisteme", () -> swap(new SystemRecordsView().build()))
+                        createNavButton("🚗", "Vehicle Registry", () -> swap(new VehicleView().build())),
+                        createNavButton("🔧", "Workshop Services", () -> swap(new WorkshopView().build())),
+                        createNavButton("🔍", "Browse Vehicles", () -> swap(new BrowseVehiclesView().build())),
+                        createNavButton("📊", "System Records", () -> swap(new SystemRecordsView().build()))
                 );
                 break;
 
             case CUSTOMER:
                 nav.getChildren().addAll(
-                        createNavButton("🚗", "Likoloi tsa Ka", () -> swap(new CustomerVehicleView().build())),
-                        createNavButton("🛒", "Reka Likoloi", () -> swap(new CustomerBrowseVehicleView().build())),
-                        createNavButton("📊", "Lirekoto tsa Sisteme", () -> swap(new SystemRecordsView().build()))
+                        createNavButton("🚗", "My Vehicles", () -> swap(new CustomerVehicleView().build())),
+                        createNavButton("🛒", "Buy Vehicles", () -> swap(new CustomerBrowseVehicleView().build())),
+                        createNavButton("📊", "System Records", () -> swap(new SystemRecordsView().build()))
                 );
                 break;
 
             case POLICE:
                 nav.getChildren().addAll(
-                        createNavButton("👮", "Litlaleho tsa Sepolesa", () -> swap(new PoliceView().build())),
-                        createNavButton("🔍", "Batla Likoloi", () -> swap(new BrowseVehiclesView().build())),
-                        createNavButton("📊", "Lirekoto tsa Sisteme", () -> swap(new SystemRecordsView().build()))
+                        createNavButton("👮", "Police Reports", () -> swap(new PoliceView().build())),
+                        createNavButton("🔍", "Search Vehicles", () -> swap(new BrowseVehiclesView().build())),
+                        createNavButton("📊", "System Records", () -> swap(new SystemRecordsView().build()))
                 );
                 break;
 
             case INSURANCE:
                 nav.getChildren().addAll(
-                        createNavButton("📄", "Rejistara ea Inshorense", () -> swap(new InsuranceView().build())),
-                        createNavButton("🔍", "Batla Likoloi", () -> swap(new BrowseVehiclesView().build())),
-                        createNavButton("📊", "Lirekoto tsa Sisteme", () -> swap(new SystemRecordsView().build()))
+                        createNavButton("📄", "Insurance Registry", () -> swap(new InsuranceView().build())),
+                        createNavButton("🔍", "Browse Vehicles", () -> swap(new BrowseVehiclesView().build())),
+                        createNavButton("📊", "System Records", () -> swap(new SystemRecordsView().build()))
                 );
                 break;
 
             default:
                 nav.getChildren().add(
-                        createNavButton("🔍", "Batla Likoloi", () -> swap(new BrowseVehiclesView().build()))
+                        createNavButton("🔍", "Browse Vehicles", () -> swap(new BrowseVehiclesView().build()))
                 );
                 break;
         }
@@ -377,9 +396,9 @@ public class DashboardView {
         ));
 
         btn.setOnAction(e -> {
-            setStatus("Ho laela " + text + "...");
+            setStatus("Loading " + text + "...");
             action.run();
-            setStatus("E lokile");
+            setStatus("Ready");
 
             if (progressIndicator != null) {
                 progressIndicator.setVisible(true);
@@ -404,7 +423,7 @@ public class DashboardView {
                         "-fx-border-width: 1 0 0 0;"
         );
 
-        statusLabel = new Label("✓ E lokile");
+        statusLabel = new Label("✓ Ready");
         statusLabel.setTextFill(Color.web(DARK_SLATE));
         statusLabel.setFont(Font.font("Helvetica", 11));
 
@@ -437,8 +456,8 @@ public class DashboardView {
 
     private void setStatus(String text) {
         if (statusLabel != null) {
-            if (text.equals("E lokile")) {
-                statusLabel.setText("✓ E lokile");
+            if (text.equals("Ready")) {
+                statusLabel.setText("✓ Ready");
             } else {
                 statusLabel.setText("⏳ " + text);
             }
@@ -465,7 +484,7 @@ public class DashboardView {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0, 0, 2);"
         );
 
-        Label welcome = new Label("Rea u amohela hape, " + user.getFullName() + "!");
+        Label welcome = new Label("Welcome back, " + user.getFullName() + "!");
         welcome.setFont(Font.font("Helvetica", FontWeight.BOLD, 28));
         welcome.setTextFill(Color.web(PEARL_WHITE));
 
@@ -487,7 +506,7 @@ public class DashboardView {
                 createStatCard("🎯", stats[6], stats[7], SOFT_PINK)
         );
 
-        Label quickActionsTitle = new Label("Liketsahalo tse Potlakileng");
+        Label quickActionsTitle = new Label("Quick Actions");
         quickActionsTitle.setFont(Font.font("Helvetica", FontWeight.BOLD, 18));
         quickActionsTitle.setTextFill(Color.web(DARK_SLATE));
 
@@ -503,7 +522,7 @@ public class DashboardView {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);"
         );
 
-        Label tipsTitle = new Label("💡 Likeletso & Tlhahisoleseling");
+        Label tipsTitle = new Label("💡 Tips & Information");
         tipsTitle.setFont(Font.font("Helvetica", FontWeight.BOLD, 14));
         tipsTitle.setTextFill(Color.web(DARK_SLATE));
 
@@ -524,23 +543,23 @@ public class DashboardView {
 
     private String getRoleMessage(AppUser.Role role) {
         switch (role) {
-            case ADMIN: return "U na le taolo e felletseng ea sisteme. Laola basebelisi, likoloi, le bareki.";
-            case WORKSHOP: return "Laola rejistaro ea likoloi le lirekoto tsa litšebeletso ka bokhabane.";
-            case CUSTOMER: return "Sheba likoloi tsa hao tse ngolisitsoeng 'me u phenye lethathamo la rona.";
-            case POLICE: return "Fumana lirekoto tsa likoloi, kenya litlaleho, 'me u laole litlolo.";
-            case INSURANCE: return "Laola melaoana ea inshorense 'me u shebe likoloi tse inshorenste.";
-            default: return "Khetha karolo ho tsoa ka lehlakoreng ho qala.";
+            case ADMIN: return "You have full system oversight. Manage users, vehicles, and customers. View all records.";
+            case WORKSHOP: return "Manage vehicle registrations and service records efficiently.";
+            case CUSTOMER: return "View your registered vehicles and browse our catalog.";
+            case POLICE: return "Access vehicle records, file reports, and manage violations.";
+            case INSURANCE: return "Manage insurance policies and track insured vehicles.";
+            default: return "Select a module from the sidebar to begin.";
         }
     }
 
     private String[] getRoleStats(AppUser.Role role) {
         switch (role) {
-            case ADMIN: return new String[]{"Basebelisi Bohle", "5", "Likoloi Bohle", "25", "Bareki Bohle", "16", "Bophelo ba Sisteme", "Bo botle"};
-            case WORKSHOP: return new String[]{"Ka Workshop", "8", "Litšebeletso tsa Kajeno", "3", "Tse Phethiloeng", "156", "Tse Emetseng", "12"};
-            case CUSTOMER: return new String[]{"Likoloi tsa Ka", "2", "Lirekoto tsa Litšebeletso", "4", "Melaoana e Sebetsang", "1", "Lipotso tse Butsoeng", "0"};
-            case POLICE: return new String[]{"Litlaleho tse Kentsoeng", "47", "Litlolo", "156", "Litekete tse sa Lefuoeng", "23", "Tse Rarollotsoeng", "133"};
-            case INSURANCE: return new String[]{"Melaoana e Sebetsang", "342", "E Felloang ke Nako Haufinyane", "18", "Ba Inshorenste", "1,122", "Likopo", "7"};
-            default: return new String[]{"Kakaretso", "0", "E Sebetsang", "0", "E Emetse", "0", "E Phethiloe", "0"};
+            case ADMIN: return new String[]{"Total Users", "5", "Total Vehicles", "25", "Total Customers", "16", "System Health", "Good"};
+            case WORKSHOP: return new String[]{"In Workshop", "8", "Today's Services", "3", "Completed", "156", "Pending", "12"};
+            case CUSTOMER: return new String[]{"My Vehicles", "2", "Service Records", "4", "Active Policies", "1", "Open Queries", "0"};
+            case POLICE: return new String[]{"Reports Filed", "47", "Violations", "156", "Unpaid Fines", "23", "Resolved", "133"};
+            case INSURANCE: return new String[]{"Active Policies", "342", "Expiring Soon", "18", "Total Insured", "1,122", "Claims", "7"};
+            default: return new String[]{"Total", "0", "Active", "0", "Pending", "0", "Completed", "0"};
         }
     }
 
@@ -598,43 +617,43 @@ public class DashboardView {
         switch (role) {
             case ADMIN:
                 return new Node[]{
-                        createQuickActionButton("👑", "Laola Basebelisi", () -> swap(new UserManagementView().build())),
-                        createQuickActionButton("🚗", "Laola Likoloi", () -> swap(new VehicleView().build())),
-                        createQuickActionButton("👥", "Laola Bareki", () -> swap(new CustomerView().build())),
-                        createQuickActionButton("📊", "Sheba Litlaleho", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("👑", "Manage Users", () -> swap(new UserManagementView().build())),
+                        createQuickActionButton("🚗", "Manage Vehicles", () -> swap(new VehicleView().build())),
+                        createQuickActionButton("👥", "Manage Customers", () -> swap(new CustomerView().build())),
+                        createQuickActionButton("📊", "View Reports", () -> swap(new SystemRecordsView().build()))
                 };
             case WORKSHOP:
                 return new Node[]{
-                        createQuickActionButton("🚗", "Koloi e Ncha", () -> swap(new VehicleView().build())),
-                        createQuickActionButton("🔧", "Kenya Tšebeletso", () -> swap(new WorkshopView().build())),
-                        createQuickActionButton("🔍", "Batla", () -> swap(new BrowseVehiclesView().build())),
-                        createQuickActionButton("📊", "Lirekoto", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("🚗", "New Vehicle", () -> swap(new VehicleView().build())),
+                        createQuickActionButton("🔧", "Add Service", () -> swap(new WorkshopView().build())),
+                        createQuickActionButton("🔍", "Search", () -> swap(new BrowseVehiclesView().build())),
+                        createQuickActionButton("📊", "Records", () -> swap(new SystemRecordsView().build()))
                 };
             case CUSTOMER:
                 return new Node[]{
-                        createQuickActionButton("🚗", "Likoloi tsa Ka", () -> swap(new CustomerVehicleView().build())),
-                        createQuickActionButton("🛒", "Reka Koloi", () -> swap(new CustomerBrowseVehicleView().build())),
-                        createQuickActionButton("🔍", "Fetla", () -> swap(new BrowseVehiclesView().build())),
-                        createQuickActionButton("📊", "Lirekoto", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("🚗", "My Vehicles", () -> swap(new CustomerVehicleView().build())),
+                        createQuickActionButton("🛒", "Buy Vehicle", () -> swap(new CustomerBrowseVehicleView().build())),
+                        createQuickActionButton("🔍", "Browse", () -> swap(new BrowseVehiclesView().build())),
+                        createQuickActionButton("📊", "Records", () -> swap(new SystemRecordsView().build()))
                 };
             case POLICE:
                 return new Node[]{
-                        createQuickActionButton("📋", "Kenya Tlaleho", () -> swap(new PoliceView().build())),
-                        createQuickActionButton("⚠️", "Fana ka Tekete", () -> swap(new PoliceView().build())),
-                        createQuickActionButton("🔍", "Batla", () -> swap(new BrowseVehiclesView().build())),
-                        createQuickActionButton("📊", "Lirekoto", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("📋", "File Report", () -> swap(new PoliceView().build())),
+                        createQuickActionButton("⚠️", "Issue Fine", () -> swap(new PoliceView().build())),
+                        createQuickActionButton("🔍", "Search", () -> swap(new BrowseVehiclesView().build())),
+                        createQuickActionButton("📊", "Records", () -> swap(new SystemRecordsView().build()))
                 };
             case INSURANCE:
                 return new Node[]{
-                        createQuickActionButton("📄", "Ngolisa", () -> swap(new InsuranceView().build())),
-                        createQuickActionButton("✅", "Kenya Tšebetsong", () -> swap(new InsuranceView().build())),
-                        createQuickActionButton("🔍", "Fetla", () -> swap(new BrowseVehiclesView().build())),
-                        createQuickActionButton("📊", "Lirekoto", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("📄", "Register", () -> swap(new InsuranceView().build())),
+                        createQuickActionButton("✅", "Activate", () -> swap(new InsuranceView().build())),
+                        createQuickActionButton("🔍", "Browse", () -> swap(new BrowseVehiclesView().build())),
+                        createQuickActionButton("📊", "Records", () -> swap(new SystemRecordsView().build()))
                 };
             default:
                 return new Node[]{
-                        createQuickActionButton("🔍", "Fetla", () -> swap(new BrowseVehiclesView().build())),
-                        createQuickActionButton("📊", "Lirekoto", () -> swap(new SystemRecordsView().build()))
+                        createQuickActionButton("🔍", "Browse", () -> swap(new BrowseVehiclesView().build())),
+                        createQuickActionButton("📊", "Records", () -> swap(new SystemRecordsView().build()))
                 };
         }
     }
@@ -700,12 +719,12 @@ public class DashboardView {
 
     private String getTip(AppUser.Role role) {
         switch (role) {
-            case ADMIN: return "U le Mo admin, u ka laola basebelisi, likoloi, le bareki. U ka sheba lirekoto tsohle.";
-            case WORKSHOP: return "Ngolisa likoloi tse ncha 'me u latele nalane ea litšebeletso. Tšebeletso e 'ngoe le e 'ngoe e lokela ho kenyelletsa litšenyehelo le tlhaloso.";
-            case CUSTOMER: return "U ka batla likoloi tse rekisoang 'me u ikopanye le beng ba tsona ka kotloloho ka module ea Reka Likoloi.";
-            case POLICE: return "Kenya litlaleho tsa sepolesa 'me u fane ka litlolo. Sebelisa mokhoa oa ho batla ho fumana tlhahisoleseling ea koloi kapele.";
-            case INSURANCE: return "Ngolisa likoloi bakeng sa melaoana ea inshorense. Kenya melaoana tšebetsong 'me u e nchafatse selemo le selemo.";
-            default: return "Sebelisa bara e ka lehlakoreng ho tsamaea likarolong tse fapaneng tsa sisteme.";
+            case ADMIN: return "As Admin, you can manage users, vehicles, and customers. You can view all records but operational tasks are for specific roles.";
+            case WORKSHOP: return "Register new vehicles and track service history. Each service record should include cost and description.";
+            case CUSTOMER: return "You can browse vehicles for sale and contact owners directly through the Buy Vehicles module.";
+            case POLICE: return "File police reports and issue violations. Use the search feature to quickly find vehicle information.";
+            case INSURANCE: return "Register vehicles for insurance policies. Activate policies and renew them annually.";
+            default: return "Use, the sidebar to navigate through different modules of the system.";
         }
     }
 }
